@@ -83,7 +83,7 @@ var randomItem = selectRandomItem(items);
  *NOTICE🔔*
 *To avoid disconnections join our channel below*
 
-https://whatsapp.com/channel/0029Vb5O5AGEawdqTdMRj514
+https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t
 
 Our Bot repository 
 https://github.com/Lordblast2/LORDBLAST-XD 
@@ -93,9 +93,9 @@ https://github.com/Lordblast2/LORDBLAST-XD
 text: desc,
 contextInfo: {
 externalAdReply: {
-title: "LORDBLAST",
+title: "LORDELVIS",
 thumbnailUrl: "https://storage.giftedtech.web.id/file/download/sbqQW.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5O5AGEawdqTdMRj514",
+sourceUrl: "https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t",
 mediaType: 1,
 renderLargerThumbnail: true
 }  
@@ -104,14 +104,14 @@ renderLargerThumbnail: true
 {quoted:code })
                     } catch (e) {
                             let ddd = sock.sendMessage(sock.user.id, { text: e });
-                            let desc = `*Use this session to link to deploy your bot*\n\n ◦ *Github:* https://github.com/Peacemaker-cyber/Peacemaker-md`;
+                            let desc = `*Use this session to link to deploy your bot*\n\n ◦ *Github:* https://github.com/Lordblast2/LORDBLAST-XD`;
                             await sock.sendMessage(sock.user.id, {
 text: desc,
 contextInfo: {
 externalAdReply: {
-title: "LORDBLAST",
+title: "ELVIS",
 thumbnailUrl: "https://storage.giftedtech.web.id/file/download/sbqQW.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5O5AGEawdqTdMRj514",
+sourceUrl: "https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t",
 mediaType: 2,
 renderLargerThumbnail: true,
 showAdAttribution: true
