@@ -77,7 +77,7 @@ var randomItem = selectRandomItem(items);
 > *Use this session to link to deploy your bor*
  *Thanks for Choosing us* 
 > Join WhatsApp Channel
-https://whatsapp.com/channel/0029Vb5O5AGEawdqTdMRj514
+https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t
 
 Dont forget to follow us on GitHub 
 https://github.com/Lordblast2/LORDBLAST-XD 
@@ -89,7 +89,7 @@ contextInfo: {
 externalAdReply: {
 title: " LORDBLAST XD 𝐂𝐎𝐍𝐄𝐂𝐓𝐄𝐃",
 thumbnailUrl: "https://storage.giftedtech.web.id/file/download/sbqQW.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029VajJoCoLI8YePbpsnE3q",
+sourceUrl: "https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t",
 mediaType: 1,
 renderLargerThumbnail: true
 }  
@@ -103,7 +103,7 @@ renderLargerThumbnail: true
 > *Use this session to link to deploy your bot*
  *Thanks for Choosing us* 
 > Join WhatsApp Channel
-https://whatsapp.com/channel/0029Vb5O5AGEawdqTdMRj514
+https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t
 
 Dont forget to follow us on GitHub 
 https://github.com/Lordblast2/LORDBLAST-XD 
@@ -115,7 +115,7 @@ contextInfo: {
 externalAdReply: {
 title: " ELVIS",
 thumbnailUrl: "https://storage.giftedtech.web.id/file/download/sbqQW.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5O5AGEawdqTdMRj514",
+sourceUrl: "https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t",
 mediaType: 2,
 renderLargerThumbnail: true,
 showAdAttribution: true
