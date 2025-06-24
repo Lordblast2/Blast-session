@@ -1,182 +1,149 @@
-const { makeid } = require('./gen-id');
+const { giftedid } = require('./id'); // Ensure this module exports `giftedid`
 const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
-const { default: makeWASocket, useMultiFileAuthState, delay, Browsers, makeCacheableSignalKeyStore, getAggregateVotesInPollMessage, DisconnectReason, WA_DEFAULT_EPHEMERAL, jidNormalizedUser, proto, getDevice, generateWAMessageFromContent, fetchLatestBaileysVersion, makeInMemoryStore, getContentType, generateForwardMessageContent, downloadContentFromMessage, jidDecode } = require('@whiskeysockets/baileys')
+const { Storage } = require("megajs");
 
-const { upload } = require('./mega');
+const {
+    default: Gifted_Tech,
+    useMultiFileAuthState,
+    delay,
+    makeCacheableSignalKeyStore,
+    Browsers
+} = require("@whiskeysockets/baileys");
+
+// Function to generate a random Mega ID
+function randomMegaId(length = 6, numberLength = 4) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    const number = Math.floor(Math.random() * Math.pow(10, numberLength));
+    return `${result}${number}`;
+}
+
+// Function to upload credentials to Mega
+async function uploadCredsToMega(credsPath) {
+    try {
+        const storage = await new Storage({
+            email: 'sylivanusmomanyi@gmail.com', // Your Mega A/c Email Here
+            password: 'Sylivanus@42620143' // Your Mega A/c Password Here
+        }).ready;
+        console.log('Mega storage initialized.');
+
+        if (!fs.existsSync(credsPath)) {
+            throw new Error(`File not found: ${credsPath}`);
+        }
+
+        const fileSize = fs.statSync(credsPath).size;
+        const uploadResult = await storage.upload({
+            name: `${randomMegaId()}.json`,
+            size: fileSize
+        }, fs.createReadStream(credsPath)).complete;
+
+        console.log('Session successfully uploaded to Mega.');
+        const fileNode = storage.files[uploadResult.nodeId];
+        const megaUrl = await fileNode.link();
+        console.log(`Session Url: ${megaUrl}`);
+        return megaUrl;
+    } catch (error) {
+        console.error('Error uploading to Mega:', error);
+        throw error;
+    }
+}
+
+// Function to remove a file
 function removeFile(FilePath) {
     if (!fs.existsSync(FilePath)) return false;
     fs.rmSync(FilePath, { recursive: true, force: true });
 }
+
+// Router to handle pairing code generation
 router.get('/', async (req, res) => {
-    const id = makeid();
+    const id = giftedid(); // Ensure `giftedid` is defined
     let num = req.query.number;
-    async function GIFTED_MD_PAIR_CODE() {
-        const {
-            state,
-            saveCreds
-        } = await useMultiFileAuthState('./temp/' + id);
+
+    async function GIFTED_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+
         try {
-var items = ["Safari"];
-function selectRandomItem(array) {
-  var randomIndex = Math.floor(Math.random() * array.length);
-  return array[randomIndex];
-}
-var randomItem = selectRandomItem(items);
-            
-            let sock = makeWASocket({
+            let Gifted = Gifted_Tech({
                 auth: {
                     creds: state.creds,
                     keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
-                generateHighQualityLinkPreview: true,
                 logger: pino({ level: "fatal" }).child({ level: "fatal" }),
-                syncFullHistory: false,
-                browser: Browsers.macOS(randomItem)
+                browser: Browsers.macOS("Safari")
             });
-            if (!sock.authState.creds.registered) {
+
+            if (!Gifted.authState.creds.registered) {
                 await delay(1500);
                 num = num.replace(/[^0-9]/g, '');
-                const code = await sock.requestPairingCode(num);
+                const code = await Gifted.requestPairingCode(num);
+                console.log(`Your Code: ${code}`);
+
                 if (!res.headersSent) {
-                    await res.send({ code });
+                    res.send({ code });
                 }
             }
-            sock.ev.on('creds.update', saveCreds);
-            sock.ev.on("connection.update", async (s) => {
 
-    const {
-                    connection,
-                    lastDisconnect
-                } = s;
-                
-                if (connection == "open") {
+            Gifted.ev.on('creds.update', saveCreds);
+            Gifted.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
+
+                if (connection === "open") {
                     await delay(5000);
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    let rf = __dirname + `/temp/${id}/creds.json`;
-                    function generateRandomText() {
-                        const prefix = "3EB";
-                        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-                        let randomText = prefix;
-                        for (let i = prefix.length; i < 22; i++) {
-                            const randomIndex = Math.floor(Math.random() * characters.length);
-                            randomText += characters.charAt(randomIndex);
-                        }
-                        return randomText;
+                    const filePath = __dirname + `/temp/${id}/creds.json`;
+
+                    if (!fs.existsSync(filePath)) {
+                        console.error("File not found:", filePath);
+                        return;
                     }
-                    const randomText = generateRandomText();
-                    try {
 
+                    const megaUrl = await uploadCredsToMega(filePath);
+                    const sid = megaUrl.includes("https://mega.nz/file/")
+                        ? 'Silva~' + megaUrl.split("https://mega.nz/file/")[1]
+                        : 'Error: Invalid URL';
 
-                        
-                        const { upload } = require('./mega');
-                        const mega_url = await upload(fs.createReadStream(rf), `${sock.user.id}.json`);
-                        const string_session = mega_url.replace('https://mega.nz/file/', '');
-                        let md = "BLAST~" + string_session;
-                        let code = await sock.sendMessage(sock.user.id, { text: md });
-                        let desc = `*Hello there User!* 
+                    console.log(`Session ID: ${sid}`);
 
-> *Use this session to link to deploy your bot*
- *NOTICE🔔*
-*To avoid disconnections join our channel below*
+                    const session = await Gifted.sendMessage(Gifted.user.id, { text: sid });
 
-https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t
+                    const GIFTED_TEXT = `
+______________________________
+*SESSION ID GENERATED SUCCESSFUL*
+______________________________
+SILVA TECH INC
 
-Our Bot repository 
-https://github.com/Lordblast2/LORDBLAST-XD 
+ DEPLOY LORDBLAST XD BOT OR SILVA BLAST XD
+______________________________
 
-> *Regards Bera*`; 
-                        await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "LORDELVIS",
-thumbnailUrl: "https://storage.giftedtech.web.id/file/download/sbqQW.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t",
-mediaType: 1,
-renderLargerThumbnail: true
-}  
-}
-},
-{quoted:code })
-                    } catch (e) {
-                            let ddd = sock.sendMessage(sock.user.id, { text: e });
-                            let desc = `*Use this session to link to deploy your bot*\n\n ◦ *Github:* https://github.com/Lordblast2/LORDBLAST-XD`;
-                            await sock.sendMessage(sock.user.id, {
-text: desc,
-contextInfo: {
-externalAdReply: {
-title: "ELVIS",
-thumbnailUrl: "https://storage.giftedtech.web.id/file/download/sbqQW.jpg",
-sourceUrl: "https://whatsapp.com/channel/0029Vb5qc6N2Jl8E3EcVBv0t",
-mediaType: 2,
-renderLargerThumbnail: true,
-showAdAttribution: true
-}  
-}
-},
-{quoted:ddd })
-                    }
-                    await delay(10);
-                    await sock.ws.close();
-                    await removeFile('./temp/' + id);
-                    console.log(`👤 ${sock.user.id} 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗲𝗱 ✅ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...`);
-                    await delay(10);
-                    process.exit();
-                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10);
-                    GIFTED_MD_PAIR_CODE();
+Use your Session ID Above to Deploy your Bot.`;
+
+                    await Gifted.sendMessage(Gifted.user.id, { text: GIFTED_TEXT }, { quoted: session });
+
+                    await delay(100);
+                    await Gifted.ws.close();
+                    return removeFile('./temp/' + id);
+                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode !== 401) {
+                    await delay(10000);
+                    GIFTED_PAIR_CODE();
                 }
             });
         } catch (err) {
-            console.log("service restated");
-            await removeFile('./temp/' + id);
-            if (!res.headersSent) {
-                await res.send({ code: "❗ Service Unavailable" });
-            }
-        }
-    }
-   return await GIFTED_MD_PAIR_CODE();
-});/*
-setInterval(() => {
-    console.log("☘️ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...");
-    process.exit();
-}, 180000); //1440min*/
-module.exports = router;
+            console.error("Service Has Been Restarted:", err);
+            removeFile('./temp/' + id);
 
-                                    renderLargerThumbnail: true,
-                                    showAdAttribution: true
-                                }  
-                            }
-                        },
-                        { quoted: ddd })
-                    }
-                    await delay(10);
-                    await sock.ws.close();
-                    await removeFile('./temp/' + id);
-                    console.log(`👤 ${sock.user.id} 𝗖𝗼𝗻𝗻𝗲𝗰𝘁𝗲𝗱 ✅ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼c𝗲𝘀𝘀...`);
-                    await delay(10);
-                    process.exit();
-                } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10);
-                    GIFTED_MD_PAIR_CODE();
-                }
-            });
-        } catch (err) {
-            console.log("service restated");
-            await removeFile('./temp/' + id);
             if (!res.headersSent) {
-                await res.send({ code: "❗ Service Unavailable" });
+                res.send({ code: "Service is Currently Unavailable" });
             }
         }
     }
-   return await GIFTED_MD_PAIR_CODE();
-});/*
-setInterval(() => {
-    console.log("☘️ 𝗥𝗲𝘀𝘁𝗮𝗿𝘁𝗶𝗻𝗴 𝗽𝗿𝗼𝗰𝗲𝘀𝘀...");
-    process.exit();
-}, 180000); //30min*/
+
+    await GIFTED_PAIR_CODE();
+});
+
 module.exports = router;
